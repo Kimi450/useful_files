@@ -3,20 +3,55 @@
 # for examples
 # If not running interactively, don't do anything
 
-# cd /mnt/c/Users/karan/Desktop/playground
+cd ~
 
 alias python=python3
 alias pip=pip3
 
-alias ee="explorer.exe ."
-
 alias clip='xclip -sel clip'
 alias gbr="git branch | grep -v "master" | xargs git branch -D"
+alias ee="explorer.exe ."
 
-rmi () {
-  docker rmi $(docker images | grep '$1')
+export K8S_NAMESPACE=kimi450
+
+monitor() {
+  watch "kubectl get pods -o wide -n $1  && echo && echo  && kubectl get svc -n $1"
 }
 
+rmi () {
+  docker rmi $(docker images | grep $1)
+}
+
+patch () {
+  kubectl patch service $1 --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
+}
+
+# switch namespace
+k_sn () {
+  kubectl config set-context --current --namespace=$1
+}
+# get current namespace
+k_cn() {
+  kubectl config view --minify --output 'jsonpath={..namespace}'; echo
+}
+# switch context
+k_sc() {
+  kubectl config use-context $1
+}
+# current context
+k_cc() {
+  kubectl config view --minify --output 'jsonpath={..current-context}'; echo
+}
+
+# uninstall everything and reset namespace
+function reset {
+  k_sn $K8S_NAMESPACE > /dev/null && echo "On $(k_cc):$(k_cn)"
+  helm delete $(helm ls --short --namespace $K8S_NAMESPACE) --namespace $K8S_NAMESPACE
+  kubectl delete namespace $K8S_NAMESPACE && kubectl create namespace $K8S_NAMESPACE || kubectl create namespace $K8S_NAMESPACE
+}
+
+
+# login to docker to make life easier
 # better command prompt
 PROMPT_COMMAND=__prompt_command # Func to gen PS1 after CMDs
 
@@ -41,22 +76,14 @@ __prompt_command() {
   elif [ ${#EXIT} -eq 2 ]; then
    dashes="-"
   fi
- PS1="${Gre}${USER} ${BYel}\t ${RCol}"
+  PS1="${Gre}[$(cat /sys/class/power_supply/BAT0/capacity)%] $(k_cc):$(k_cn) ${BYel}\t ${RCol}"
+ # PS1="${Gre}$(k_cc):$(k_cn) ${BYel}\t ${RCol}"
  if [ $EXIT != 0 ]; then
  PS1+="[${Red}${dashes}${EXIT}${RCol}]" # Add red if exit code non 0
  else
   PS1+="[${Gre}${dashes}${EXIT}${RCol}]"
  fi
  PS1+="${Pur} \w ${BYel}$(parse_git_branch) $ ${RCol}"
-}
-
-# ease of use
-function reset {
-  helm delete $(helm ls --short)
-  kubectl delete namespace $K8_NAMESPACE && kubectl create namespace $K8_NAMESPACE || kubectl create namespace $K8_NAMESPACE
-}
-k_sn () {
-  kubectl config set-context --current --namespace=$1
 }
 
 # Colors for git stuff
