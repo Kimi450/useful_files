@@ -121,6 +121,8 @@ set number
 
 " 4 spaces for tabs
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
+" Highlight searches
+set hlsearch
 
 
 " For lightline 
