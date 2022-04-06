@@ -14,14 +14,22 @@ alias ee="explorer.exe ."
 
 export K8S_NAMESPACE=kimi450
 
+# get logs for pod where only 1 pod is expected
+logs() {
+  kubectl logs -f $(kubectl get pods | grep $1 | awk '{print $1}')
+}
+
+# monitor namespace services and pods
 monitor() {
   watch "kubectl get pods -o wide -n $1  && echo && echo  && kubectl get svc -n $1"
 }
 
+# remove docker images with string in name
 rmi () {
   docker rmi $(docker images | grep $1)
 }
 
+# patch service to nodeport
 patch () {
   kubectl patch service $1 --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
 }
