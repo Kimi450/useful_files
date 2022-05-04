@@ -54,7 +54,7 @@ k_cc() {
 # uninstall everything and reset namespace
 function reset {
   k_sn $K8S_NAMESPACE > /dev/null && echo "On $(k_cc):$(k_cn)"
-  helm delete $(helm ls --short --namespace $K8S_NAMESPACE) --namespace $K8S_NAMESPACE
+  helm delete $(helm ls --all --short --namespace $K8S_NAMESPACE) --namespace $K8S_NAMESPACE
   kubectl delete namespace $K8S_NAMESPACE && kubectl create namespace $K8S_NAMESPACE || kubectl create namespace $K8S_NAMESPACE
 }
 
