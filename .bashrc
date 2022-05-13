@@ -31,7 +31,13 @@ rmi () {
 
 # patch service to nodeport
 patch () {
-  kubectl patch service $1 --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
+  if [ -z "$2" ]; then
+    # plain patch to nodeport
+    kubectl patch service $1 --type='json' -p "[{'op':'replace','path':'/spec/type','value':'NodePort'}]"
+  else
+    # patch to nodeport with specific port
+    kubectl patch service $1 --type='json' -p "[{'op':'replace','path':'/spec/type','value':'NodePort'},{'op':'replace','path':'/spec/ports/0/nodePort','value':$2}]"
+  fi
 }
 
 # switch namespace
