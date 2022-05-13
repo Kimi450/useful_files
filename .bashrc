@@ -30,6 +30,8 @@ rmi () {
 }
 
 # patch service to nodeport
+# usage: patch <service>
+# usage: patch <service> <nodeport to use>
 patch () {
   if [ -z "$2" ]; then
     # plain patch to nodeport
@@ -58,10 +60,18 @@ k_cc() {
 }
 
 # uninstall everything and reset namespace
+# usage: reset
+#        Defaults to resetting $K8S_NAMESPACE
+# usage: reset <namespace>
 function reset {
-  k_sn $K8S_NAMESPACE > /dev/null && echo "On $(k_cc):$(k_cn)"
-  helm delete $(helm ls --all --short --namespace $K8S_NAMESPACE) --namespace $K8S_NAMESPACE
-  kubectl delete namespace $K8S_NAMESPACE && kubectl create namespace $K8S_NAMESPACE || kubectl create namespace $K8S_NAMESPACE
+  if [ -z "$1" ]; then
+    NAMESPACE=$K8S_NAMESPACE
+  else
+    NAMESPACE=$1
+  fi
+  k_sn $NAMESPACE > /dev/null && echo "On $(k_cc):$(k_cn)"
+  helm delete $(helm ls --all --short --namespace $NAMESPACE) --namespace $NAMESPACE
+  kubectl delete namespace $NAMESPACE && kubectl create namespace $NAMESPACE || kubectl create namespace $NAMESPACE
 }
 
 
