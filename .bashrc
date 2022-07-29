@@ -19,11 +19,6 @@ logs() {
   kubectl logs -f $(kubectl get pods | grep $1 | awk '{print $1}')
 }
 
-# monitor namespace services and pods
-monitor() {
-  watch "kubectl get pods -o wide -n $1  && echo && echo  && kubectl get svc -n $1"
-}
-
 # remove docker images with string in name
 rmi () {
   docker rmi $(docker images | grep $1)
@@ -57,6 +52,15 @@ k_sc() {
 # current context
 k_cc() {
   kubectl config view --minify --output 'jsonpath={..current-context}'; echo
+}
+
+# monitor given namespace (or K8S_NAMESPACE) services and pods
+monitor() {
+  NAMESPACE=$1
+  if [ -z "$1" ]; then
+     NAMESPACE=$(k_cn)
+  fi
+  watch "kubectl get pods,svc -n $NAMESPACE"
 }
 
 # uninstall everything and reset namespace
