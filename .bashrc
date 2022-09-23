@@ -9,19 +9,37 @@ alias python=python3
 alias pip=pip3
 
 alias clip='xclip -sel clip'
-alias gbr="git branch | grep -v "master" | xargs git branch -D"
+alias gbr="git branch | egrep -v "master" | xargs git branch -D"
 alias ee="explorer.exe ."
 
 export K8S_NAMESPACE=kimi450
 
 # get logs for pod where only 1 pod is expected
 logs() {
-  kubectl logs -f $(kubectl get pods | grep $1 | awk '{print $1}')
+  kubectl logs -f $(kubectl get pods | egrep "$1" | awk '{print $1}')
+}
+
+# delete resource based on the pattern provided
+# default resource is pod
+delete() {
+  if [[ -z "$2" && -z "$1" ]]; then
+    echo "usage: delete <POD_PATTERN>"
+    echo "usage: delete <KUBERNETES_RESOURCE> <RESOURCE_PATTERN>"
+    echo "Provide pattern to delete pod, or resource and pattern"
+    return
+  fi
+  resource="pod"
+  pattern="$1"
+  if [ -n "$2" ]; then
+    resource="$1"
+    pattern="$2"
+  fi
+  kubectl delete ${resource} $(kubectl get ${resource} | egrep "${pattern}" | awk '{print $1}')
 }
 
 # remove docker images with string in name
 rmi () {
-  docker rmi $(docker images | grep $1)
+  docker rmi $(docker images | egrep "$1")
 }
 
 # patch service to nodeport
