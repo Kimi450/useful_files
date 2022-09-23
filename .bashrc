@@ -37,6 +37,17 @@ delete() {
   kubectl delete ${resource} $(kubectl get ${resource} | egrep "${pattern}" | awk '{print $1}')
 }
 
+# kubectl exec into pod matching the pattern with given command, default command is bash
+execit() {
+  command="bash"
+  pattern="$1"
+  if [ -n "$2" ]; then
+    pattern="$1"
+    command="$2"
+  fi
+  kubectl exec -it $(kubectl get pod | egrep "${pattern}" | awk '{print $1}') -- ${command}
+}
+
 # remove docker images with string in name
 rmi () {
   docker rmi $(docker images | egrep "$1")
