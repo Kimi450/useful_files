@@ -67,17 +67,17 @@ patch () {
 }
 
 # switch namespace
-k_sn () {
-  kubectl config set-context --current --namespace=$1
-}
+# k_sn () { # prefer using kubens https://github.com/ahmetb/kubectx
+#   kubectl config set-context --current --namespace=$1
+# }
 # get current namespace
 k_cn() {
   kubectl config view --minify --output 'jsonpath={..namespace}'; echo
 }
 # switch context
-k_sc() {
-  kubectl config use-context $1
-}
+# k_sc() { # prefer using kubectx https://github.com/ahmetb/kubectx
+#  kubectl config use-context $1
+#}
 # current context
 k_cc() {
   kubectl config view --minify --output 'jsonpath={..current-context}'; echo
