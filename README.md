@@ -3,3 +3,4 @@ Generic files useful for a linux setup
 
 # Recommended packages
 - [kubectx](https://github.com/ahmetb/kubectx)
+- [fzf](https://github.com/junegunn/fzf)
