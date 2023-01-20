@@ -11,6 +11,7 @@ alias pip=pip3
 alias clip='xclip -sel clip'
 alias gbr="git branch | egrep -v "master" | xargs git branch -D"
 alias ee="explorer.exe ."
+alias k=kubectl
 
 export K8S_NAMESPACE=kimi450
 
@@ -67,17 +68,25 @@ patch () {
 }
 
 # switch namespace
-# k_sn () { # prefer using kubens https://github.com/ahmetb/kubectx
-#   kubectl config set-context --current --namespace=$1
-# }
+kn() {
+    kubens $1
+    if [ $? -ne 0 ]; then
+        if [ $# -eq 0 ]; then
+            echo -e "Missing namespace...\nusage: kn NAMESPACE"
+            return 1
+        fi
+        kubectl config set-context --current --namespace=$1
+    fi
+}
+
 # get current namespace
 k_cn() {
   kubectl config view --minify --output 'jsonpath={..namespace}'; echo
 }
+
 # switch context
-# k_sc() { # prefer using kubectx https://github.com/ahmetb/kubectx
-#  kubectl config use-context $1
-#}
+alias kk=kubectx
+
 # current context
 k_cc() {
   kubectl config view --minify --output 'jsonpath={..current-context}'; echo
