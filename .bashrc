@@ -92,6 +92,21 @@ k_cc() {
   kubectl config view --minify --output 'jsonpath={..current-context}'; echo
 }
 
+# get every single resource available on the cluster
+# or provide a list of resources you are interested in
+# eg: "kall pods service"
+kall() {
+    lst=$@
+    if [ -z $1 ]; then
+        lst=`kubectl api-resources --no-headers | awk '{print $1}'`
+    fi
+    for resource in $lst; do
+        echo -e "***${resource}***";
+        kubectl get $resource;
+    done
+}
+
+
 # monitor given namespace (or K8S_NAMESPACE) services and pods
 monitor() {
   NAMESPACE=$1
