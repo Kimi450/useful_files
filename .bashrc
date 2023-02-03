@@ -80,7 +80,7 @@ kn() {
 }
 
 # get current namespace
-k_cn() {
+kcn() {
   kubectl config view --minify --output 'jsonpath={..namespace}'; echo
 }
 
@@ -88,7 +88,7 @@ k_cn() {
 alias kk=kubectx
 
 # current context
-k_cc() {
+kcc() {
   kubectl config view --minify --output 'jsonpath={..current-context}'; echo
 }
 
@@ -111,7 +111,7 @@ kall() {
 monitor() {
   NAMESPACE=$1
   if [ -z "$1" ]; then
-     NAMESPACE=$(k_cn)
+     NAMESPACE=$(kcn)
   fi
   watch "kubectl get pods,svc -n $NAMESPACE"
 }
@@ -126,7 +126,7 @@ function reset {
   else
     NAMESPACE=$1
   fi
-  k_sn $NAMESPACE > /dev/null && echo "On $(k_cc):$(k_cn)"
+  kn $NAMESPACE > /dev/null && echo "On $(kcc):$(kcn)"
   helm delete $(helm ls --all --short --namespace $NAMESPACE) --namespace $NAMESPACE
   kubectl delete namespace $NAMESPACE && kubectl create namespace $NAMESPACE || kubectl create namespace $NAMESPACE
 }
@@ -157,8 +157,8 @@ __prompt_command() {
   elif [ ${#EXIT} -eq 2 ]; then
    dashes="-"
   fi
-  PS1="${Gre}[$(cat /sys/class/power_supply/BAT0/capacity)%] $(k_cc):$(k_cn) ${BYel}\t ${RCol}"
- # PS1="${Gre}$(k_cc):$(k_cn) ${BYel}\t ${RCol}"
+  PS1="${Gre}[$(cat /sys/class/power_supply/BAT0/capacity)%] $(kcc):$(kcn) ${BYel}\t ${RCol}"
+ # PS1="${Gre}$(kcc):$(kcn) ${BYel}\t ${RCol}"
  if [ $EXIT != 0 ]; then
  PS1+="[${Red}${dashes}${EXIT}${RCol}]" # Add red if exit code non 0
  else
