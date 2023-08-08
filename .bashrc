@@ -17,7 +17,10 @@ export K8S_NAMESPACE=kimi450
 
 # get logs for pod where only 1 pod is expected
 logs() {
-  kubectl logs -f $(kubectl get pods | egrep "$1" | awk '{print $1}')
+  if [ -n "$2" ]; then
+    container_data="-c $2"
+  fi
+  kubectl logs -f $(kubectl get pods | egrep "$1" | awk '{print $1}') ${container_data}
 }
 
 # delete resource based on the pattern provided
@@ -43,10 +46,12 @@ execit() {
   command="bash"
   pattern="$1"
   if [ -n "$2" ]; then
-    pattern="$1"
-    command="$2"
+    container_data="-c $2"
   fi
-  kubectl exec -it $(kubectl get pod | egrep "${pattern}" | awk '{print $1}') -- ${command}
+  if [ -n "$3" ]; then
+    command="$3"
+  fi
+  kubectl exec -it $(kubectl get pod | egrep "${pattern}" | awk '{print $1}') ${container_data} -- ${command}
 }
 
 # remove docker images with string in name
