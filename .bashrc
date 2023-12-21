@@ -138,9 +138,10 @@ function reset {
 
 # use fzf for ^r history searches in the terminal
 # source: https://github.com/junegunn/fzf/wiki/examples#command-history
-bind '"\C-r": "\C-x1\e^\er"'
-bind -x '"\C-x1": __fzf_history';
-
+if [ "$PS1" ]; then
+  bind '"\C-r": "\C-x1\e^\er"'
+  bind -x '"\C-x1": __fzf_history';
+fi
 __fzf_history ()
 {
 __ehc $(history | fzf --tac --tiebreak=index | perl -ne 'm/^\s*([0-9]+)/ and print "!$1"')
