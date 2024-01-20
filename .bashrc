@@ -17,6 +17,7 @@ export K8S_NAMESPACE=kimi450
 
 # get logs for pod where only 1 pod is expected
 logs() {
+  local container_data
   if [ -n "$2" ]; then
     container_data="-c $2"
   fi
@@ -43,6 +44,7 @@ delete() {
 
 # kubectl exec into pod matching the pattern with given command, default command is bash
 execit() {
+  local container_data
   command="bash"
   pattern="$1"
   if [ -n "$2" ]; then
