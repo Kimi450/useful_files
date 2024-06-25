@@ -15,6 +15,31 @@ alias k=kubectl
 
 export K8S_NAMESPACE=kimi450
 
+# Eternal bash history.
+# ---------------------
+
+# Enable history appending instead of overwriting.  #139609
+shopt -s histappend
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+# HISTCONTROL=ignoreboth
+
+# Undocumented feature which sets the size to "unlimited".
+# http://stackoverflow.com/questions/9457233/unlimited-bash-history
+export HISTFILESIZE=-1
+export HISTSIZE=-1    
+export HISTTIMEFORMAT="[%F %T] "
+# Change the file location because certain bash sessions truncate .bash_history file upon close.
+# http://superuser.com/questions/575479/bash-history-truncated-to-500-lines-on-each-login
+# 
+export HISTFILE=~/.bash_eternal_history
+# Force prompt to write history after every command.
+# http://superuser.com/questions/20900/bash-history-loss
+# PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+
+# Python
+# ------------------
 # auto activate/deactivate venv called `.env` when moving between dirs
 # https://stackoverflow.com/questions/45216663/how-to-automatically-activate-virtualenvs-when-cding-into-a-directory
 function cd() {
@@ -229,17 +254,6 @@ case $- in
     *i*) ;;
       *) return;;
 esac
-
-# don't put duplicate lines or lines starting with space in the history.
-# See bash(1) for more options
-HISTCONTROL=ignoreboth
-
-# append to the history file, don't overwrite it
-shopt -s histappend
-
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
